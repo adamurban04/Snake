@@ -1,21 +1,17 @@
 # Snake  
 Welcome to the repository for the Snake Project.  
   
-I created a snake demo, which runs pretty well.  
-There is also the intro-page, where you can start the game using a button.  
+The purpose of this project was to learn working with GUI and improve in java.  
   
-Right now, the game is set so that it restarts after death.  
-What I have in mind to make the game better is creating a new Swing GUI Form - JFrame Form (the one I used to create the into-page) for the end of the game.  
-There should be the score the player got and an option to play again.  
+_I realise now, that there are many things I could do differently to make the code more efficient.  
+(for example I could use desktop pane instead of creating a new JFrame for every slide)  
+But it served its purpose as I have much more knowledge about Swift now._  
   
-Another thing I want to change is to create different kinds of apples (bonus apples) and maybe walls, that would appear ocasionally for a limited time.  
-It might be good to create a few levels for this (we could also use the form and buttons to run the specific level).  
+  
   
 What I plan to do:  
-0: Remove Score from the window  
-1: End Game form - lose (your score + try again)  
-2: 3 Different Levels form (can a button be a picture?, the background should be whiter intro background)  
-3: If you reach a certain score you passed: End Game form - win  
+1: Display the score with some level of transparency  
+2: 3 Different Levels  
   
   
   
