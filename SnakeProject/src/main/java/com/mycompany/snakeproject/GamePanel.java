@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements ActionListener {
 
+    //Fields
     static final int SCREEN_WIDTH = 1024;
     static final int SCREEN_HEIGHT = 768;
     static final int UNIT_SIZE = 32;    //32x32 = 1024   &&    32x24 = 768
@@ -16,65 +17,92 @@ public class GamePanel extends JPanel implements ActionListener {
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 3;
-    int applesEaten;
-    int appleX;
-    int appleY;
-    int specialAppleX;
-    int specialAppleY;
+    int score = 0;
+    int appleX, appleY;
     char direction = 'R';
     boolean running = false;
+    boolean victory = false;
+    char appleType;
     Timer timer;
     Random random;
 
+    //Window
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
+        
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         startGame();
 
     }
+    
+    
+    //-----------------------------GAME CONTROL-----------------------------
 
+    //Start Game
     public void startGame() {
 
-        newApple();
-        newSpecialApple();
+        newApple(); //Apple generation
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
 
     }
+    
+    //Game Victory
+    public void gameVictory(Graphics g) {
+       // Load the PNG image
+        ImageIcon icon = new ImageIcon(getClass().getResource("/snakeVictory.png"));
+        Image image = icon.getImage();
 
-    public void resetGame() {
-        bodyParts = 3;
-        applesEaten = 0;
-        direction = 'R';
-        running = false;
-        newApple();
-        for (int i = 0; i < bodyParts; i++) {
-            x[i] = 0;
-            y[i] = 0;
-        }
-        startGame();
+        // Draw the image
+        g.drawImage(image, 0, 0, this);
     }
     
+    //Game Loss
+    public void gameLoss(Graphics g) {
+       // Load the PNG image
+        ImageIcon icon = new ImageIcon(getClass().getResource("/snakeLoss.png"));
+        Image image = icon.getImage();
+
+        // Draw the image
+        g.drawImage(image, 0, 0, this);
+    }
+    
+    
+    //-----------------------------DRAW-----------------------------
+    
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
 
     }
-
     public void draw(Graphics g) {
 
         if (running) {
-            //RED APPLE
-            g.setColor(Color.RED);
-            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+            //RED APPLE (if score == 5, then also CYAN APPLE)
+     
+            if (score != 5 && score!= 10){
+                appleType = 'R';
+                g.setColor(Color.RED);
+                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+            }
             
-            //CYAN APPLE
-            g.setColor(Color.CYAN);
-            g.fillOval(specialAppleX, specialAppleY, UNIT_SIZE, UNIT_SIZE);
+            else if (score == 5) {
+                appleType = 'C';
+                g.setColor(Color.CYAN);
+                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+            }
+            
+            //If score == 10, YELLOW APPLE
+            else  {
+                appleType = 'Y';
+                g.setColor(Color.YELLOW);
+                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+            }
 
             //SNAKE
             for (int i = 0; i < bodyParts; i++) {
@@ -86,29 +114,36 @@ public class GamePanel extends JPanel implements ActionListener {
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
-
-            g.setColor(Color.red);
-            g.setFont(new Font("Ink Free", Font.BOLD, 40));
-            FontMetrics metrics = getFontMetrics(g.getFont());
-            g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
         }
-        
+        //if not running Game Over
+        else if (!running && victory){
+            gameVictory(g);
+        }
         else {
-            gameOver(g);
+            gameLoss(g);
         }
 
     }
+    
+    //-----------------------------APPLES COORDINATES-----------------------------
 
+    //apple coordinates
     public void newApple() {
         appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
         appleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
     }
     
-    public void newSpecialApple() {
-    specialAppleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
-    specialAppleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+    
+    
+    //Teleport snake (after eating special apple)
+    public void teleportSnakeForward() {
+        for (int i = 0; i < bodyParts; i++) {
+            x[i] = x[i] + random.nextInt(5) * UNIT_SIZE;
+            y[i] = y[i] + random.nextInt(5) * UNIT_SIZE;
+        }
     }
 
+    //Movement (coordinates)
     public void move() {
         for (int i = bodyParts; i > 0; i--) {
             x[i] = x[i - 1];
@@ -132,24 +167,34 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
+    //-----------------------------APPLES COLLISIONS-----------------------------
+    
+    //If apple collision 
     public void checkApple() {
         if ((x[0] == appleX) && (y[0] == appleY)) {
-            bodyParts++;
-            applesEaten++;
-            newApple();
+            if (appleType == 'R'){
+                bodyParts++;
+                score++;
+                newApple();
+            }
+            
+            else if (appleType == 'C'){
+                teleportSnakeForward();
+                score +=2;
+                newApple();
+            }
+            
+            else {
+                victory = true;
+                running = false;
+            }
         }
 
     }
     
-    public void checkSpecialApple() {
-        if ((x[0] == specialAppleX) && (y[0] == specialAppleY)) {
-            bodyParts += 3;
-            applesEaten += 3;
-            newSpecialApple();
-        }
 
-    }
 
+    //if wall collision, stop running (reset the game)
     public void checkCollisions() {
         //checks if head collides with body
         for (int i = bodyParts; i > 0; i--) {
@@ -163,7 +208,7 @@ public class GamePanel extends JPanel implements ActionListener {
             running = false;
         }
 
-        if (x[0] > SCREEN_WIDTH) {
+        if (x[0] > SCREEN_WIDTH - UNIT_SIZE) {
             running = false;
         }
 
@@ -171,7 +216,7 @@ public class GamePanel extends JPanel implements ActionListener {
             running = false;
         }
 
-        if (y[0] > SCREEN_HEIGHT) {
+        if (y[0] > SCREEN_HEIGHT - UNIT_SIZE) {
             running = false;
         }
 
@@ -181,9 +226,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    public void gameOver(Graphics g) {
-       
-    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -195,10 +238,6 @@ public class GamePanel extends JPanel implements ActionListener {
 
         }
         repaint();
-        
-        if (!running){
-            resetGame();
-        }
         
 
     }
