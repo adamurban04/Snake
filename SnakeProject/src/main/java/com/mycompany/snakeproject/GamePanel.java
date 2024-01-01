@@ -23,6 +23,7 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean running = false;
     boolean victory = false;
     char appleType;
+    static int level;
     Timer timer;
     Random random;
 
@@ -31,7 +32,6 @@ public class GamePanel extends JPanel implements ActionListener {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
-        
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         startGame();
@@ -53,22 +53,35 @@ public class GamePanel extends JPanel implements ActionListener {
     
     //Game Victory
     public void gameVictory(Graphics g) {
-       // Load the PNG image
+        victory = false;
+        if (isInitialized(Levels.levelUnlocked)){
+            if (level == Levels.levelUnlocked){ //when playing highest level you can
+                Levels.levelUnlocked = level + 1;   //you will unlock another level
+            }
+        }
+        else {
+            Levels.levelUnlocked = level + 1;   //first case (when playing 1st level 1st time), should be 2
+        }
+        Levels frame2 = new Levels();
+        frame2.show();
+        JFrame gameFrame = (JFrame) SwingUtilities.getRoot(this);
+        gameFrame.dispose();
+        
+        /* Load the PNG image
         ImageIcon icon = new ImageIcon(getClass().getResource("/snakeVictory.png"));
         Image image = icon.getImage();
 
         // Draw the image
         g.drawImage(image, 0, 0, this);
+*/
     }
     
     //Game Loss
     public void gameLoss(Graphics g) {
-       // Load the PNG image
-        ImageIcon icon = new ImageIcon(getClass().getResource("/snakeLoss.png"));
-        Image image = icon.getImage();
-
-        // Draw the image
-        g.drawImage(image, 0, 0, this);
+        Levels frame2 = new Levels();
+        frame2.show();
+        JFrame gameFrame = (JFrame) SwingUtilities.getRoot(this);
+        gameFrame.dispose();
     }
     
     
@@ -85,20 +98,20 @@ public class GamePanel extends JPanel implements ActionListener {
         if (running) {
             //RED APPLE (if score == 5, then also CYAN APPLE)
      
-            if (score != 5 && score!= 10){
+            if ((((score % 5) != 0) && (score < (10*level))) || score == 0){
                 appleType = 'R';
                 g.setColor(Color.RED);
                 g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
             }
             
-            else if (score == 5) {
+            else if (((score % 5) == 0) && (score < (10*level))) {
                 appleType = 'C';
                 g.setColor(Color.CYAN);
                 g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
             }
             
-            //If score == 10, YELLOW APPLE
-            else  {
+            //YELLOW APPLE
+            else  if (score == 10*level) {
                 appleType = 'Y';
                 g.setColor(Color.YELLOW);
                 g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
@@ -129,8 +142,14 @@ public class GamePanel extends JPanel implements ActionListener {
 
     //apple coordinates
     public void newApple() {
-        appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
-        appleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+        if (((score % 5) == 0) && (score < (10*level))) {
+            appleX = random.nextInt((int) ((SCREEN_WIDTH - 192) / UNIT_SIZE)) * UNIT_SIZE;
+            appleY = random.nextInt((int) ((SCREEN_HEIGHT - 192) / UNIT_SIZE)) * UNIT_SIZE;
+        }
+        else {
+            appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
+            appleY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+        }    
     }
     
     
@@ -184,7 +203,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 newApple();
             }
             
-            else {
+            else if (appleType == 'Y'){
                 victory = true;
                 running = false;
             }
@@ -273,6 +292,18 @@ public class GamePanel extends JPanel implements ActionListener {
                     break;
             }
 
+        }
+    }
+    
+    // Method to check if a variable is initialized
+    private static boolean isInitialized(int variable) {
+        try {
+            // If no exception is thrown, the variable is initialized
+            variable++;
+            return true;
+        } catch (Exception e) {
+            // If an exception is thrown, the variable is not initialized
+            return false;
         }
     }
 }
