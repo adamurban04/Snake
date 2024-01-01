@@ -62,18 +62,20 @@ public class GamePanel extends JPanel implements ActionListener {
         else {
             Levels.levelUnlocked = level + 1;   //first case (when playing 1st level 1st time), should be 2
         }
-        Levels frame2 = new Levels();
-        frame2.show();
-        JFrame gameFrame = (JFrame) SwingUtilities.getRoot(this);
-        gameFrame.dispose();
-        
-        /* Load the PNG image
-        ImageIcon icon = new ImageIcon(getClass().getResource("/snakeVictory.png"));
-        Image image = icon.getImage();
+        if (Levels.levelUnlocked == 4){
+            // Load the PNG image
+            ImageIcon icon = new ImageIcon(getClass().getResource("/snakeVictory.png"));
+            Image image = icon.getImage();
 
-        // Draw the image
-        g.drawImage(image, 0, 0, this);
-*/
+            // Draw the image
+            g.drawImage(image, 0, 0, this);
+        }
+        else {
+            Levels frame2 = new Levels();
+            frame2.show();
+            JFrame gameFrame = (JFrame) SwingUtilities.getRoot(this);
+            gameFrame.dispose();
+        }    
     }
     
     //Game Loss
@@ -96,26 +98,24 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics g) {
 
         if (running) {
-            //RED APPLE (if score == 5, then also CYAN APPLE)
-     
+            //RED APPLE
             if ((((score % 5) != 0) && (score < (10*level))) || score == 0){
                 appleType = 'R';
                 g.setColor(Color.RED);
-                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
             }
             
+            //CYAN APPLE
             else if (((score % 5) == 0) && (score < (10*level))) {
                 appleType = 'C';
-                g.setColor(Color.CYAN);
-                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+                g.setColor(Color.CYAN);               
             }
             
             //YELLOW APPLE
             else  if (score == 10*level) {
                 appleType = 'Y';
-                g.setColor(Color.YELLOW);
-                g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
+                g.setColor(Color.YELLOW);              
             }
+            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 
             //SNAKE
             for (int i = 0; i < bodyParts; i++) {
@@ -127,6 +127,20 @@ public class GamePanel extends JPanel implements ActionListener {
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
+            
+            //SCORE
+            if (appleType == 'R'){
+                g.setColor(new Color(128, 128, 128, 64)); // 128 for alpha (50% opacity)
+            }
+            else if (appleType == 'C'){
+                g.setColor(new Color(109, 145, 163, 64)); // 128 for alpha (50% opacity)
+            }
+            else if (appleType == 'Y'){
+                g.setColor(new Color(173, 170, 113, 64)); // 128 for alpha (50% opacity)
+            }
+            g.setFont(new Font("Ink Free", Font.BOLD, 80));
+            FontMetrics metrics = getFontMetrics(g.getFont());
+            g.drawString("Score: " + score, (SCREEN_WIDTH - metrics.stringWidth("Score: " + score)) / 2, SCREEN_HEIGHT/2);
         }
         //if not running Game Over
         else if (!running && victory){
@@ -210,6 +224,8 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
     }
+    
+    //-----------------------------WALLS COLLISIONS-----------------------------
     
 
 
