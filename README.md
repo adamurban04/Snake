@@ -8,11 +8,9 @@ _I realise now, that there are many things I could do differently to make the co
 But it served its purpose as I have much more knowledge about Swift now._  
   
   
+*Red apples are for 1 point, Cyan apples are 2 points (They teleport you though!).  
+Golden apple is the final apple, which appears once you have the required score.  *
   
-What I plan to do:  
-1: Display the score with some level of transparency  
-2: 3 Different Levels  
-  
-  
+I might add music and walls sometime later.
   
 This is the idea right now. 🥷
