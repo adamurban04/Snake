@@ -10,3 +10,5 @@ But it served its purpose as I have much more knowledge about AWT and Swing now.
   
 **Red apples are for 1 point. Cyan apples are 2 points (They teleport you though!).  
 Golden apple is the final apple, which appears once you have the required score.**  
+
+Youtube video-demonstration: https://www.youtube.com/watch?v=6w4cYXYkgLE
