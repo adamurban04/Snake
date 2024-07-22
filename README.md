@@ -2,7 +2,7 @@
 
 The purpose of this project was to learn working with GUI and improve in java and its frameworks (AWT, Swing).  
 
-The Backgroud pictures for the game and its levels were created using AI.
+The backgroud pictures for the game and its levels were created using AI.
   
 Note: I could use desktop pane instead of creating a new JFrame for every slide
   
