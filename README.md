@@ -11,4 +11,4 @@ Note: I could use desktop pane instead of creating a new JFrame for every slide
 Cyan apples are 2 points (They teleport you though!)  
 Golden apple is the final apple, which appears once you have the required score**  
 
-Youtube video-demonstration: [here](https://www.youtube.com/watch?v=6w4cYXYkgLE)
+Youtube video-demonstration: https://www.youtube.com/watch?v=6w4cYXYkgLE
