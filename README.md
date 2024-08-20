@@ -1,6 +1,7 @@
 # Snake  
 
-<img width="1261" alt="snakegamephoto" src="https://github.com/user-attachments/assets/6fbe5837-a3d7-467e-8253-b0b727cefba4">
+![resizedsnakePic](https://github.com/user-attachments/assets/e0e7fde2-dc7d-4ceb-9ba4-833d91330e45)
+
 
 The purpose of this project was to improve in java and its frameworks for GUI (AWT, Swing).  
 
